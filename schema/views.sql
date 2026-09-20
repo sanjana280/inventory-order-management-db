@@ -4,6 +4,7 @@ DROP VIEW IF EXISTS v_current_inventory;
 DROP VIEW IF EXISTS v_order_details;
 DROP VIEW IF EXISTS v_monthly_sales_summary;
 DROP VIEW IF EXISTS v_supplier_purchase_summary;
+DROP VIEW IF EXISTS v_low_stock_alert;
 
 CREATE VIEW v_current_inventory AS
 SELECT
@@ -61,3 +62,17 @@ SELECT
 FROM suppliers s
 LEFT JOIN purchase_orders po ON s.supplier_id = po.supplier_id
 GROUP BY s.supplier_id, s.supplier_name;
+CREATE VIEW v_low_stock_alert AS
+SELECT
+    product_id,
+    sku,
+    product_name,
+    category,
+    supplier_name,
+    warehouse_name,
+    location,
+    quantity,
+    reorder_level,
+    stock_status
+FROM v_current_inventory
+WHERE stock_status IN ('LOW STOCK', 'OUT OF STOCK');
